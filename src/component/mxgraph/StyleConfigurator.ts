@@ -20,9 +20,8 @@ import { SequenceFlowKind } from '../../model/bpmn/edge/SequenceFlowKind';
 import { MarkerConstant } from './MarkerConfigurator';
 import { StyleConstant } from './StyleUtils';
 
+// TODO 'clone' function is missing in mxgraph-type-definitions@1.0.2
 declare const mxUtils: typeof mxgraph.mxUtils;
-declare const mxConstants: typeof mxgraph.mxConstants;
-declare const mxPerimeter: typeof mxgraph.mxPerimeter;
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export default class StyleConfigurator {
@@ -43,7 +42,7 @@ export default class StyleConfigurator {
     ],
   ]);
 
-  constructor(private graph: mxgraph.mxGraph) {}
+  constructor(private graph: mxGraph) {}
 
   public configureStyles(): void {
     mxConstants.RECTANGLE_ROUNDING_FACTOR = 0.1;
@@ -128,28 +127,12 @@ export default class StyleConfigurator {
   }
 
   private configureActivitiesStyle(): void {
-    this.configureTasksStyle();
-    this.configureCallActivityStyle();
-  }
-
-  private configureTasksStyle(): void {
-    ShapeUtil.taskKinds().forEach(kind => {
+    ShapeUtil.activityKinds().forEach(kind => {
       const style = this.cloneDefaultVertexStyle();
       style[mxConstants.STYLE_SHAPE] = kind;
       style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
       this.putCellStyle(kind, style);
     });
-  }
-
-  private configureCallActivityStyle(): void {
-    const style = this.cloneDefaultVertexStyle();
-    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
-    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
-    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
-    style[mxConstants.STYLE_STROKECOLOR] = '#2C6DA3';
-    style[mxConstants.STYLE_STROKEWIDTH] = 4;
-    style[mxConstants.STYLE_ROUNDED] = true;
-    this.putCellStyle(ShapeBpmnElementKind.CALL_ACTIVITY, style);
   }
 
   private configureGatewaysStyle(): void {

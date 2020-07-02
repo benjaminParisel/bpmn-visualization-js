@@ -1,6 +1,6 @@
 # Contributing
 
-You are here to help on BPMN Visualization JS? Awesome, feel welcome and read the following guidelines in order to know how to contribute, to ask questions and to make BPMN Visualization JS such a great tool.
+You are here to help on `bpmn-visualization`? Awesome, feel welcome and read the following guidelines in order to know how to contribute, to ask questions and to make `bpmn-visualization` such a great tool.
 
 All members of our community are expected to follow our [Code of Conduct](CODE_OF_CONDUCT.md). Please make sure you are welcoming and friendly in all of our spaces.
 
@@ -10,9 +10,9 @@ There are many ways to contribute:
 
 - help people with the questions they ask on the [Github Issues](https://github.com/process-analytics/bpmn-visualization-js/issues )
 - submitting bug reports and feature requests in the [Github Issues](https://github.com/process-analytics/bpmn-visualization-js/issues/new )
-- [writing code](CONTRIBUTING.md#code-and-documentation-changes) which can be incorporated into BPMN Visualization JS itself
+- [writing code](CONTRIBUTING.md#code-and-documentation-changes) which can be incorporated into `bpmn-visualization` itself
 - [improving](CONTRIBUTING.md#code-and-documentation-changes) the documentation
-- improve the existing example applications to demonstrate features in BPMN Visualization JS
+- improve the existing example applications to demonstrate features in `bpmn-visualization`
 
 ## Code and documentation changes
 
@@ -42,7 +42,7 @@ test everything)
 
 ### Fork & create a branch
 
-[Fork BPMN Visualization JS](https://help.github.com/articles/fork-a-repo) and create a branch with a descriptive name. 
+[Fork bpmn-visualization](https://help.github.com/articles/fork-a-repo) and create a branch with a descriptive name. 
 
 A good branch name would be (where issue #25 is the ticket you're working on): **25_add-annotations-to-tasks**
 
@@ -113,13 +113,13 @@ To fully benefit the ESLint and Jest testing frameworks, you must properly set u
 
 ##### Intellij
 
-*EditorConfig* (https://www.jetbrains.com/help/idea/configuring-code-style.html#editorconfig)
+###### [EditorConfig](https://www.jetbrains.com/help/idea/configuring-code-style.html#editorconfig)
 
 Go to `File` -> `Settings` ( `IntelliJ IDEA` -> `Preferences` on `macOS`) and `Editor` --> `Code Style`, then tick the
 `Enable EditorConfig support`
 
 
-*ESLint* (https://www.jetbrains.com/help/idea/eslint.html#)
+###### [ESLint](https://www.jetbrains.com/help/idea/eslint.html#)
 
 Go to `File` -> `Settings` and type ESLint in search box
 
@@ -133,7 +133,7 @@ You also need to set up Coding Style rules
 
 It is as simple as doing `right-click` on the file `.eslintrc.js` and choosing option `Apply ESLint Code Style Rules`
 
-*Jest tests* (https://www.jetbrains.com/help/idea/running-unit-tests-on-jest.html)
+###### [Jest tests](https://www.jetbrains.com/help/idea/running-unit-tests-on-jest.html)
 
 To be able to run tests from IntelliJ, you must set up the default Jest template in `Run/Debug Configurations`
 
@@ -142,15 +142,25 @@ Adjust following parameters:
   - unit tests: `<project_dir>/jest.config.unit.js`
   - end to end tests: `<project_dir>/jest.config.e2e.js`
 
+###### [Debugging TypeScript code](https://www.jetbrains.com/help/idea/running-and-debugging-typescript.html#ws_ts_debug_client_side_on_external_dev_server)
 
-*SonarLint*
+- create a new `JavaScript Debug` configuration as described in the [Intellij documentation](https://www.jetbrains.com/help/idea/running-and-debugging-typescript.html#ws_ts_debug_client_side_on_external_dev_server)
+  - the targeted url is: http://localhost:10001/
+  - use `Chrome` as browser
+  - check `Ensure breakpoints are detected when loading scripts`  
+- start the application in development mode by running `npm run start` or `npm run watch`
+- select the `JavaScript Debug` configuration and run it with Debug Runner
+- the browser opens, and debug session starts (see [Intellij documentation](https://www.jetbrains.com/help/idea/running-and-debugging-typescript.html#ws_ts_debug_client_side_on_external_dev_server)
+documentation for more details) 
+
+###### SonarLint
 
 Additionally, it is advised to install SonarLint Plugin
 
 It helps to avoid coding mistakes -> reduced technical debt
 
 
-*AsciiDoc*
+###### AsciiDoc
 
 We use [asciidoc](https://asciidoctor.org/docs/what-is-asciidoc/) to write the documentation.
 
@@ -172,7 +182,8 @@ You only need to sign the CLA once or when the CLA terms have changed.
 
 ### Open a Pull Request
 
-At this point, you should switch back to your master branch and make sure it's up to date with BPMN Visualization JS's master branch:
+At this point, you should switch back to your master branch and make sure it's up to date with `bpmn-visualization`
+`master` branch:
 
 ```sh
 git remote add upstream git@github.com:process-analytics/bpmn-visualization-js.git

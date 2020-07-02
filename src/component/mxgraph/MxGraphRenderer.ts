@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { mxgraph } from 'ts-mxgraph';
 import Shape from '../../model/bpmn/shape/Shape';
 import Edge from '../../model/bpmn/edge/Edge';
 import BpmnModel from '../../model/bpmn/BpmnModel';
-import ShapeBpmnElement, { ShapeBpmnBoundaryEvent, ShapeBpmnEvent } from '../../model/bpmn/shape/ShapeBpmnElement';
+import ShapeBpmnElement, { ShapeBpmnBoundaryEvent, ShapeBpmnEvent, ShapeBpmnSubProcess } from '../../model/bpmn/shape/ShapeBpmnElement';
 import Waypoint from '../../model/bpmn/edge/Waypoint';
 import { StyleConstant } from './StyleUtils';
 import { Font } from '../../model/bpmn/Label';
@@ -25,11 +24,8 @@ import Bounds from '../../model/bpmn/Bounds';
 import ShapeUtil from '../../model/bpmn/shape/ShapeUtil';
 import CoordinatesTranslator from './extension/CoordinatesTranslator';
 
-declare const mxPoint: typeof mxgraph.mxPoint;
-declare const mxConstants: typeof mxgraph.mxConstants;
-
 export default class MxGraphRenderer {
-  constructor(readonly graph: mxgraph.mxGraph, readonly coordinatesTranslator: CoordinatesTranslator) {}
+  constructor(readonly graph: mxGraph, readonly coordinatesTranslator: CoordinatesTranslator) {}
 
   public render(bpmnModel: BpmnModel): void {
     const model = this.graph.getModel();
@@ -52,7 +48,7 @@ export default class MxGraphRenderer {
     });
   }
 
-  private getParent(bpmnElement: ShapeBpmnElement): mxgraph.mxCell {
+  private getParent(bpmnElement: ShapeBpmnElement): mxCell {
     const bpmnElementParent = this.getCell(bpmnElement.parentId);
     if (bpmnElementParent) {
       return bpmnElementParent;
@@ -93,12 +89,19 @@ export default class MxGraphRenderer {
     }
 
     const bpmnElement = bpmnCell.bpmnElement;
-    if (bpmnElement instanceof ShapeBpmnEvent) {
-      styleValues.set(StyleConstant.BPMN_STYLE_EVENT_KIND, bpmnElement.eventKind);
-    }
+    if (bpmnCell instanceof Shape) {
+      if (bpmnElement instanceof ShapeBpmnEvent) {
+        styleValues.set(StyleConstant.BPMN_STYLE_EVENT_KIND, bpmnElement.eventKind);
+      }
 
-    if (bpmnElement instanceof ShapeBpmnBoundaryEvent) {
-      styleValues.set(StyleConstant.BPMN_STYLE_IS_INTERRUPTING, String(bpmnElement.isInterrupting));
+      if (bpmnElement instanceof ShapeBpmnBoundaryEvent) {
+        styleValues.set(StyleConstant.BPMN_STYLE_IS_INTERRUPTING, String(bpmnElement.isInterrupting));
+      }
+
+      if (bpmnElement instanceof ShapeBpmnSubProcess) {
+        styleValues.set(StyleConstant.BPMN_STYLE_SUB_PROCESS_KIND, bpmnElement.subProcessKind);
+        styleValues.set(StyleConstant.BPMN_STYLE_IS_EXPANDED, String(bpmnCell.isExpanded));
+      }
     }
 
     if (labelBounds) {
@@ -111,6 +114,10 @@ export default class MxGraphRenderer {
         styleValues.set(mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_TOP);
         styleValues.set(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_LEFT);
       }
+    }
+    // when no label bounds, adjust the default style dynamically
+    else if (bpmnCell instanceof Shape && bpmnCell.isExpanded && bpmnElement instanceof ShapeBpmnSubProcess) {
+      styleValues.set(mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_TOP);
     }
 
     return [bpmnElement.kind as string] //
@@ -165,7 +172,7 @@ export default class MxGraphRenderer {
     });
   }
 
-  private insertWaypoints(waypoints: Waypoint[], mxEdge: mxgraph.mxCell): void {
+  private insertWaypoints(waypoints: Waypoint[], mxEdge: mxCell): void {
     if (waypoints) {
       mxEdge.geometry.points = waypoints.map(waypoint => {
         return this.coordinatesTranslator.computeRelativeCoordinates(mxEdge.parent, new mxPoint(waypoint.x, waypoint.y));
@@ -173,11 +180,11 @@ export default class MxGraphRenderer {
     }
   }
 
-  private getCell(id: string): mxgraph.mxCell {
+  private getCell(id: string): mxCell {
     return this.graph.getModel().getCell(id);
   }
 
-  private insertVertex(parent: mxgraph.mxCell, id: string | null, value: string, bounds: Bounds, labelBounds: Bounds, style?: string): mxgraph.mxCell {
+  private insertVertex(parent: mxCell, id: string | null, value: string, bounds: Bounds, labelBounds: Bounds, style?: string): mxCell {
     const vertexCoordinates = this.coordinatesTranslator.computeRelativeCoordinates(parent, new mxPoint(bounds.x, bounds.y));
     const mxCell = this.graph.insertVertex(parent, id, value, vertexCoordinates.x, vertexCoordinates.y, bounds.width, bounds.height, style);
 
@@ -191,6 +198,6 @@ export default class MxGraphRenderer {
   }
 }
 
-export function defaultMxGraphRenderer(graph: mxgraph.mxGraph): MxGraphRenderer {
+export function defaultMxGraphRenderer(graph: mxGraph): MxGraphRenderer {
   return new MxGraphRenderer(graph, new CoordinatesTranslator(graph));
 }

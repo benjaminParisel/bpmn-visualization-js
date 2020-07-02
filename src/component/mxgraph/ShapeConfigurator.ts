@@ -17,14 +17,12 @@ import { mxgraph } from 'ts-mxgraph';
 import { ShapeBpmnElementKind } from '../../model/bpmn/shape/ShapeBpmnElementKind';
 import { EndEventShape, StartEventShape, ThrowIntermediateEventShape, CatchIntermediateEventShape, BoundaryEventShape } from './shape/event-shapes';
 import { ExclusiveGatewayShape, ParallelGatewayShape, InclusiveGatewayShape } from './shape/gateway-shapes';
-import { ReceiveTaskShape, ServiceTaskShape, TaskShape, UserTaskShape } from './shape/task-shapes';
+import { SubProcessShape, ReceiveTaskShape, ServiceTaskShape, TaskShape, UserTaskShape, CallActivityShape } from './shape/activity-shapes';
 
+// TODO unable to load mxClient from mxgraph-type-definitions@1.0.2
 declare const mxClient: typeof mxgraph.mxClient;
-declare const mxShape: typeof mxgraph.mxShape;
+// TODO find the way to pass the shape constructor as 2nd argument of registerShape
 declare const mxCellRenderer: typeof mxgraph.mxCellRenderer;
-// TODO should be 'typeof mxgraph.mxSvgCanvas2D', current type definition does not declare 'minStrokeWidth'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const mxSvgCanvas2D: any;
 
 export default class ShapeConfigurator {
   public configureShapes(): void {
@@ -43,6 +41,9 @@ export default class ShapeConfigurator {
     mxCellRenderer.registerShape(ShapeBpmnElementKind.GATEWAY_EXCLUSIVE, ExclusiveGatewayShape);
     mxCellRenderer.registerShape(ShapeBpmnElementKind.GATEWAY_INCLUSIVE, InclusiveGatewayShape);
     mxCellRenderer.registerShape(ShapeBpmnElementKind.GATEWAY_PARALLEL, ParallelGatewayShape);
+    // activities
+    mxCellRenderer.registerShape(ShapeBpmnElementKind.SUB_PROCESS, SubProcessShape);
+    mxCellRenderer.registerShape(ShapeBpmnElementKind.CALL_ACTIVITY, CallActivityShape);
     // tasks
     mxCellRenderer.registerShape(ShapeBpmnElementKind.TASK, TaskShape);
     mxCellRenderer.registerShape(ShapeBpmnElementKind.TASK_SERVICE, ServiceTaskShape);
@@ -73,12 +74,13 @@ export default class ShapeConfigurator {
       //
       canvas.minStrokeWidth = this.minSvgStrokeWidth;
 
-      if (!this.antiAlias) {
-        // Rounds all numbers in the SVG output to integers
-        canvas.format = function(value: string) {
-          return Math.round(parseFloat(value));
-        };
-      }
+      // TODO mxgraph-definitions 1.0.2 wrong value arg type in the format function (should be 'string', but is 'number')
+      // if (!this.antiAlias) {
+      //   // Rounds all numbers in the SVG output to integers
+      //   canvas.format = function(value: string) {
+      //     return Math.round(parseFloat(value));
+      //   };
+      // }
 
       return canvas;
     };
